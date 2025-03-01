@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #wrapper{
+      position: relative;
+      width: 320px;
+      height: 320px;
+    }
+    #video{
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      visibility: hidden;
+    }
+    #canvas{
+      position: absolute;
+      top: 0px;
+      left: 0px;
+    }
+    #msg{
+      margin: 0px; padding: 10px;
+      background-color: lightgray;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div>
+  <div id="wrapper">
+    <video id="video" autoplay muted playsinline></video>
+    <div id="msg">Unable to access video stream.</div>
+    <canvas id="canvas"></canvas>
+  </div>
+  <label for="file_upload">
+    <input type="file" id="file_upload" accept=".json,.yaml,.yml" >
+  </label>
+</div>
+  <script type="module" src="filepicker.js" defer></script>
+  <script type="module" src="qr.js" defer></script>
+</body>
+</html>

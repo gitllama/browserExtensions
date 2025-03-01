@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "boilerplate",
+  "version": "1.0",
+  "description": "boilerplate",
+  "permissions": [ "scripting","storage", "tabs", "contextMenus", "downloads" ],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_title": "boilerplate",
+    "default_icon": {
+      "16": "icon/static_16.png",
+      "48": "icon/static_48.png",
+      "128": "icon/static_128.png"
+    }
+  },
+  "icons": {
+    "16": "icon/main_16.png",
+    "48": "icon/main_48.png",
+    "128": "icon/main_128.png"
+  },
+  "background": {
+    "service_worker": "background/background.js",
+    "type" : "module"
+  },
+  "content_scripts": [
+    {
+      "js": ["view/content/content.js"], 
+      "matches": ["<all_urls>"],
+      "run_at": "document_idle"
+    },
+    {
+      "js": ["view/content/touch.js"], 
+      "matches": ["*://ja.wikipedia.org/wiki/*"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "view/content_func.mjs",
+        "background/action.mjs",
+        "js/helper.mjs",
+        "js/gui_helper.mjs"
+      ],
+      "matches": ["<all_urls>"]
+    },
+    {
+      "resources": [
+        "js/hammer.js@2.0.8/hammer.min.js"
+      ],
+      "matches": ["*://ja.wikipedia.org/*"]
+    }
+  ]
+}

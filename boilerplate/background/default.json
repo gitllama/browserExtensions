@@ -1,0 +1,13 @@
+{
+  "host"  :"http://127.0.0.1:8000/",
+  "debug" : false,
+  "flag" : false,
+  "count" : 0,
+  "title" : "unknown",
+  "hoge" : "unknown",
+  "activetab" : {
+    "id" : null,
+    "url" : null,
+    "selection" : null 
+  }
+}
