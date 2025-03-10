@@ -8,21 +8,12 @@ edition = "2024"
 [features]
 
 [dependencies]
-axum = "*"
-tokio = { version = "1.0", features = ["full"] }
-tokio-util = { version = "*", features = ["codec"] }
-
-http-body-util = "0.1.0"
-hyper-util = { version = "0.1", features = ["client", "http1", "client-legacy"] }
-mime = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
-tower-http = { version = "0.6.1", features = ["trace"] }
+# --------server--------
+tokio = { version = "1.0", features = ["full"] }
+axum = "*"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-
-futures-util = "*"
-encoding = "*"
-encoding_rs = "*"
-encoding_rs_io = "*"
+encoding_rs = "0.8.35"

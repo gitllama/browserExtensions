@@ -35,4 +35,3 @@ fileInput.addEventListener('change', async (e) => {
   const text = await file.text();
 });
 
-

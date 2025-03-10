@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+  <div>
+    <button>Connect</button>
+  </div>
+  <script type="module">
+
+    var SensorServiceUUID = "0c4c3000-7700-46f4-aa96-d5e974e32a54"
+    var base_UUID = "00000000-0000-1000-8000-00805f9b34fb"
+    const SERVICE_UUID_START = 0x1800;
+    const SERVICE_UUID_END = 0xffff;
+
+    let a = Array(SERVICE_UUID_END - 0x2800)
+      .fill(0)
+      .map((_, i) => (SERVICE_UUID_START + i))
+      
+    let b = Array(SERVICE_UUID_END - SERVICE_UUID_START)
+      .fill(0)
+      .map((_, i) => (SERVICE_UUID_START + i))
+
+    /* デバイスの取得 */
+    document.querySelector('button').addEventListener('click', async () => {
+      try {
+        const device = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true,
+          optionalServices: b,
+        });
+        // filters: [{ services: ["device_information"] }]
+        // optionalServices: ['battery_service'] // 後でサービスにアクセスするために必要です。
+        await connectedDevice(device)
+      } catch(error) {
+        console.log('デバイスの選択に失敗しました:', error);
+      }
+    });
+    /* デバイスの取得後 */
+    async function connectedDevice(device) {
+      console.log('選択されたデバイス:', device.name);
+      console.log('選択されたデバイス:', device);
+  
+      let server  = await device.gatt.connect();
+  
+      const services = await server.getPrimaryServices();
+      // characteristic.addEventListener('characteristicvaluechanged', ()=>{
+
+      // });
+      {
+        let service = await server.getPrimaryService(0x181C);
+        let characteristic = await service.getCharacteristic(0x2A8A);
+        const value = await characteristic.readValue();
+        console.log("First Name", characteristic)
+      }
+
+      for(const info of services){
+        try {
+          console.log("services", info.uuid)
+
+          var characteristics = await info.getCharacteristics();
+          const ary = [];
+          for (const characteristic of characteristics) {
+            const read = characteristic.properties.read ? "read " : "";
+            const write = characteristic.properties.write ? "write " : "";
+            const notify = characteristic.properties.notify ? "notify " : "";
+            console.log(`${characteristic.uuid} ${read}${write}${notify}` )
+            if(characteristic.properties.notify){
+              characteristic.addEventListener('characteristicvaluechanged', (e)=>{
+                if(e.target.uuid == `0000${"2A37"}-0000-1000-8000-00805f9b34fb`.toLowerCase()){
+                  console.log('0x2A37 changed', e.target)
+                  
+                  const value = e.target.value;
+                  const dataView = new DataView(e.target.value.buffer);
+                  const flags = dataView.getUint8(0); // 最初の1バイトがFlags
+                  let heartRate;
+                  if (flags & 0x01) {
+                    // 16-bit heart rate
+                    heartRate = dataView.getUint16(1, true); // リトルエンディアン
+                  } else {
+                    // 8-bit heart rate
+                    heartRate = dataView.getUint8(1);
+                  }
+                  console.log(`Heart Rate = ${heartRate} BPM`);
+                }
+              });
+              characteristic.startNotifications();
+            }
+          }
+          console.log(ary);
+        }catch(e){
+          
+        }
+      }
+    }
+
+
+
+  </script>
+</body>
+</html>

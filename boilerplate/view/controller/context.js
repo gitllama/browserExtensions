@@ -2,7 +2,7 @@
 
 import { SET_STATE, CLICK_ACTION } from "../../background/action.mjs"
 import { messageBus, state, sendMessageLocalhost } from "../../js/helper.mjs"
-import { callView } from "../../js/gui_helper.mjs"
+import { openWorkerView } from "../../js/gui_helper.mjs"
 
 const ID_QR = 'action_qr';
 const ID_QR_TAB = 'action_qr_tab';
@@ -77,11 +77,11 @@ const contextMenus = chrome.contextMenus;
     switch (info.menuItemId) {
       case ID_QR: 
       {
-        callView('popup', "view/popup/qr.html")
+        openWorkerView('popup', "view/popup/qr.html")
       } break;
       case ID_QR_TAB: 
       {
-        callView('tab', "view/popup/qr.html")
+        openWorkerView('tab', "view/popup/qr.html")
       } break;
       case SEND_HOST: 
       {

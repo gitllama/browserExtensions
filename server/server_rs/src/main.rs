@@ -9,12 +9,12 @@ use tracing_subscriber::EnvFilter;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
+const HOST_ADDR : &str = "localhost:8000"; // "127.0.0.1:8000"
 
 #[derive(Clone, Deserialize, Serialize)]
 struct Status {
   busy: bool,
 }
-
 
 #[tokio::main]
 async fn main() {
@@ -28,10 +28,15 @@ async fn main() {
 
   let app = Router::new()
     .route("/", get(root::root))
+    .route("/get", get(root::get))
     .route("/api", post(process::call_process))
     .with_state(Arc::clone(&users_state));
 
-  let listener = tokio::net::TcpListener::bind("127.0.0.1:8000").await.unwrap();
+  let path = std::env::current_dir().unwrap();
+  info!("starting path: {}", path.display());
+
+  info!("{HOST_ADDR}");
+  let listener = tokio::net::TcpListener::bind(HOST_ADDR).await.unwrap();
   axum::serve(listener, app).await.unwrap();
 }
 

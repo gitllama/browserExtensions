@@ -9,9 +9,7 @@ use tracing::info;
 use std::sync::Arc;
 use tokio::sync::{Mutex, oneshot};
 use std::process::Stdio;
-use tokio_util::codec::{FramedRead, BytesCodec};
-use futures_util::StreamExt;
-use encoding_rs::{SHIFT_JIS, CoderResult};
+use encoding_rs::SHIFT_JIS;
 use tokio::io::AsyncReadExt;
 
 #[derive(Deserialize, Debug, Default)]
@@ -79,52 +77,6 @@ pub async fn call_process(State(users_state): State<Arc<Mutex<Status>>>, Json(pa
   }
 }
 
-
-fn _process(program : String, args : Vec<String>) -> std::io::Result<()> {
-  let mut child = std::process::Command::new(program)
-  .args(args)
-  .spawn().unwrap();
-  let _ = child.wait();
-  Ok(())
-}
-
-fn _process2(program : String, args : Vec<String>) -> std::io::Result<()> {
-  use std::io::Read;
-
-  let mut child = std::process::Command::new(program)
-    .args(args)
-    .spawn()
-    .expect("failed to execute process");
-  let stdout = child.stdout.take().expect("failed to capture stdout");
-  let stdout_reader = std::io::BufReader::new(stdout);
-
-
-  let stdout_thread = std::thread::spawn(move || {
-    let mut buffer = Vec::new();
-    for byte in stdout_reader.bytes() {
-      match byte {
-        Ok(byte) => {
-          buffer.push(byte);
-          if byte == b'\n' || byte == b'\r' {
-            let (res, _en, had_errors) = SHIFT_JIS.decode(&buffer);
-            if !had_errors {
-              print!("{}", res);
-            }
-            buffer.clear();
-          }
-        }
-        Err(e) => {
-          eprintln!("Error reading byte from stdout: {}", e);
-          break;
-        }
-      }
-    }
-});
-
-  stdout_thread.join().expect("stdout thread panicked");
-  Ok(())
-}
-
 async fn process(program : String, args : Vec<String>) -> std::io::Result<()> {
   let mut child = tokio::process::Command::new(program)
     .args(args)
@@ -132,18 +84,6 @@ async fn process(program : String, args : Vec<String>) -> std::io::Result<()> {
   child.wait().await?;
   Ok(())
 }
-
-
-async fn _process_with_output(program : String, args : Vec<String>) -> std::io::Result<String> {
-  let output = tokio::process::Command::new(program)
-    .args(args)
-    .output()
-    .await
-    .expect("failed to execute sleep");
-    info!("output {}", String::from_utf8_lossy(&output.stdout));
-  Ok(String::from_utf8_lossy(&output.stdout).to_string())
-}
-
 
 async fn process_with_output(program : String, args : Vec<String>) -> std::io::Result<String> {
   let mut child = tokio::process::Command::new(program)
@@ -170,39 +110,7 @@ async fn process_with_output(program : String, args : Vec<String>) -> std::io::R
       buffer.clear();
     }
   }
-  let status = child.wait().await?;
-
-  // stdout_thread.join().expect("stdout thread panicked");
+  let _status = child.wait().await?;
 
   Ok("output.clone()".to_string())
 }
-
-/*
- // let stdout_thread = std::thread::spawn(move || {
-  //   let mut reader = stdout_reader.bytes(); // バイト単位のイテレータ
-  //   let mut output_buffer = [0u8; 4];
-  //   let mut index = 0;
-  //   while let Some(byte_result) = reader.next() {
-  //     match byte_result {
-  //       Ok(byte) => {
-  //         output_buffer[index] = byte;
-  //         index = index + 1;
-  //         if index > 3 { index = 0; }
-  //         let (res, en, had_errors) = SHIFT_JIS.decode(&output_buffer);
-  //         // println!("{:?} : {:?} {:?} {}", &buffer, res, &en, had_errors);
-  //         if !had_errors {
-  //             // println!("{:?} {:?}", output_buffer, res);
-  //             // println!("{} : {:?}", res, res);
-  //             print!("{}", res);
-  //             output_buffer.fill(0);
-  //             index = 0;
-  //         }
-  //       }
-  //       Err(e) => {
-  //         eprintln!("Error reading byte: {}", e);
-  //         break;
-  //       }
-  //     }
-  //   }
-  // });
-*/

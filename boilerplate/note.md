@@ -106,10 +106,11 @@ console.log("yaml", jsyaml.dump({"a" : 20}))  // Globalに展開されたjsyaml�
 #### onreadystatechange()の実装例
 
 ```js
-/* content.js */
+/* content.js 1*/
 document.onreadystatechange = () => {
   if (document.readyState === "interactive") { foo_init(); }
 };
+/* content.js 2*/
 document.addEventListener("readystatechange", (event) => {
   switch (event.target.readyState) {
     case "loading": // The document is loading.

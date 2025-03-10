@@ -37,7 +37,8 @@ class MultiClick {
 }
 export const multiClick = new MultiClick();
 
-export async function callView(type, url) {
+
+export async function openWorkerView(type, url) {
   if(type == 'tab'){
     const extensionId = runtime.id;
     const [firsttab] = await tabs.query({ url : `chrome-extension://${extensionId}/${url}` });

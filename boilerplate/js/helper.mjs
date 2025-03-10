@@ -1,6 +1,5 @@
 // @ts-check
 
-
 // @ts-ignore
 const runtime = chrome.runtime;
 // @ts-ignore
@@ -79,7 +78,6 @@ class MessageBus {
       } catch {
         return "unknown"
       }
-  
     }
   }
 }

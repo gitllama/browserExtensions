@@ -2,7 +2,7 @@
 
 import { SET_STATE, CLICK_ACTION, ACTIVE_TAB } from "../../background/action.mjs"
 import { messageBus, state } from "../../js/helper.mjs"
-import { multiClick, callView } from "../../js/gui_helper.mjs"
+import { multiClick, openWorkerView } from "../../js/gui_helper.mjs"
 
 // @ts-ignore
 const action = chrome.action;
@@ -79,7 +79,7 @@ async function openNewTab(target) {
         //       chrome.windows.update(window.id, { state: "minimized" });
         //   }
         // });
-        callView("view/popup/filepicker.html")
+        openWorkerView("view/popup/filepicker.html")
         messageBus.sendMessage({
           action: SET_STATE, 
           payload: {
