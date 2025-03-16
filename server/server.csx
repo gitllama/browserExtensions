@@ -30,6 +30,9 @@ while (true) {
         var payload = fromYaml(rcd)["payload"];
         var menuItemId = payload["menuItemId"].Parse<string>();
         
+        // Uri uri = new Uri(yaml.Parse<string>());
+        // Uri uri = new Uri(fromYaml(rcd)["payload"].Parse<string>());
+
         switch(menuItemId) {
           case "link":
             task = Task.Run(() => { dl_streaming(payload["linkUrl"].Parse<string>()); });

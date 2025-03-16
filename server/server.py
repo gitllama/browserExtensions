@@ -1,6 +1,9 @@
 import http.server
 import socketserver
 import json
+import urllib.parse
+
+
 
 PORT = 8000
 class MyHandler(http.server.SimpleHTTPRequestHandler):
@@ -8,6 +11,9 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
     content_len  = int(self.headers.get("content-length"))
     data = json.loads(self.rfile.read(content_len).decode('utf-8'))
     print(json.dumps(data, indent=2))
+
+    # url = urllib.parse.urlparse(fullpath)
+    # match url.netloc:
   
     self.send_response(200)
     self.send_header('Content-type', 'application/json;charset=utf-8')
